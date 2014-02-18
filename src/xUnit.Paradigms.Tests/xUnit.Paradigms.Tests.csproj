@@ -4,11 +4,11 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{CB4A887C-22C9-4F44-9461-26908A105F67}</ProjectGuid>
+    <ProjectGuid>{3D6F91DC-1D96-4DFE-9816-D7B922E60D42}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>xUnit.Paradigms</RootNamespace>
-    <AssemblyName>xUnit.Paradigms</AssemblyName>
+    <RootNamespace>xUnit.Paradigms.Tests</RootNamespace>
+    <AssemblyName>xUnit.Paradigms.Tests</AssemblyName>
     <TargetFrameworkVersion>v4.0</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
     <SolutionDir Condition="$(SolutionDir) == '' Or $(SolutionDir) == '*Undefined*'">..\..\</SolutionDir>
@@ -32,6 +32,21 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="FrontIT.Matchers">
+      <HintPath>..\..\packages\FrontIT.Matchers.1.1.5065.8019\lib\net40\FrontIT.Matchers.dll</HintPath>
+    </Reference>
+    <Reference Include="Moq">
+      <HintPath>..\..\packages\Moq.3.1.416.3\lib\Moq.dll</HintPath>
+    </Reference>
+    <Reference Include="Ploeh.AutoFixture">
+      <HintPath>..\..\packages\AutoFixture.3.16.5\lib\net40\Ploeh.AutoFixture.dll</HintPath>
+    </Reference>
+    <Reference Include="Ploeh.AutoFixture.AutoMoq">
+      <HintPath>..\..\packages\AutoFixture.AutoMoq.3.16.5\lib\net40\Ploeh.AutoFixture.AutoMoq.dll</HintPath>
+    </Reference>
+    <Reference Include="Ploeh.AutoFixture.Xunit">
+      <HintPath>..\..\packages\AutoFixture.Xunit.3.16.5\lib\net40\Ploeh.AutoFixture.Xunit.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -47,22 +62,25 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AttributeExemplarFactory.cs" />
-    <Compile Include="IExemplarFactory.cs" />
-    <Compile Include="InvalidParadigmException.cs" />
-    <Compile Include="InvalidParadigmExemplarException.cs" />
-    <Compile Include="IRandomizer.cs" />
-    <Compile Include="ParadigmAttribute.cs" />
-    <Compile Include="ParadigmDataAttribute.cs" />
-    <Compile Include="ParadigmExemplar.cs" />
-    <Compile Include="ParadigmInlineDataAttribute.cs" />
-    <Compile Include="ParadigmParameter.cs" />
-    <Compile Include="ParadigmTestClassCommand.cs" />
-    <Compile Include="ParadigmTestCommand.cs" />
+    <Compile Include="DefaultAutoDataAttribute.cs" />
+    <Compile Include="ParadigmTestClassCommandTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestClasses\AClassWithStringArgument.cs" />
+    <Compile Include="TestClasses\AClassWithThreeConstructors.cs" />
+    <Compile Include="TestClasses\AClassWithTwoConstructors.cs" />
+    <Compile Include="TestClasses\AClassWithTwoIntArguments.cs" />
+    <Compile Include="TestClasses\AClassWithTwoObjectArguments.cs" />
+    <Compile Include="TestClasses\AClassWithTwoStringArguments.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="app.config" />
     <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
+    <ProjectReference Include="..\xUnit.Paradigms\xUnit.Paradigms.csproj">
+      <Project>{CB4A887C-22C9-4F44-9461-26908A105F67}</Project>
+      <Name>xUnit.Paradigms</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <Import Project="$(SolutionDir)\.nuget\NuGet.targets" Condition="Exists('$(SolutionDir)\.nuget\NuGet.targets')" />

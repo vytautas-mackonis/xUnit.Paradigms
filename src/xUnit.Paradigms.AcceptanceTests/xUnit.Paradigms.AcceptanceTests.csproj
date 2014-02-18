@@ -55,6 +55,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AClassWithTwoConstructors.cs" />
+    <Compile Include="FailureTests.cs" />
     <Compile Include="MultipleCaseTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="SingleCaseTests.cs" />

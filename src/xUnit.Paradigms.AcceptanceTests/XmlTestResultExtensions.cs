@@ -37,5 +37,20 @@ namespace xUnit.Paradigms.AcceptanceTests
             var attribute = GetAttribute(testNode, "name");
             Assert.Equal(name, attribute.Value);
         }
+
+        public static void ShouldHaveClassFailure(this XmlNode testNode, int classIndex = 0)
+        {
+            var classNodes = testNode.SelectNodes("class");
+            if (classNodes.Count <= classIndex)
+                throw new ArgumentException("Could not find class item with index " + classIndex + " in XML:\r\n" + testNode.OuterXml);
+
+            var classNode = classNodes[classIndex];
+
+            var total = GetAttribute(classNode, "total");
+            var failed = GetAttribute(classNode, "failed");
+
+            Assert.True(total.Value == failed.Value, string.Format("Expected all tests of the class to fail but there were {0}/{1} failures", failed.Value, total.Value));
+            Assert.True(classNode.ChildNodes.Count == 1 && classNode.ChildNodes[0].Name == "failure", string.Format("Expected the test result to be a class failure but it was not. Result node XML:\r\n\r\n{0}", classNode.OuterXml));
+        }
     }
 }
