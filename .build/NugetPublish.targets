@@ -1,0 +1,59 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="NugetPublishConventions.targets" />
+  <Import Project="NugetPublishConventions.Override.targets" Condition="Exists('NugetPublishConventions.Override.targets')" />
+
+  <PropertyGroup>
+    <CreatePackageDependsOn>
+      Build;
+      GetProjectVersion;
+      DeleteOldPackage
+    </CreatePackageDependsOn>
+    <PublishNugetPackageDependsOn>
+      CreatePackage;
+      DeployPackage
+    </PublishNugetPackageDependsOn>
+  </PropertyGroup>
+
+  <Target Name="PublishNugetPackage" DependsOnTargets="$(PublishNugetPackageDependsOn)">
+  </Target>
+
+  <Target Name="GetProjectVersion">
+    <GetAssemblyIdentity AssemblyFiles="$(TargetPath)">
+      <Output TaskParameter="Assemblies" ItemName="ProjectAssemblyInfo"/>
+    </GetAssemblyIdentity>
+  </Target>
+
+  <Target Name="DeleteOldPackage">
+    <ItemGroup>
+      <OldPackages Include="$(ProjectDir)*.nupkg"></OldPackages>
+    </ItemGroup>
+    <Delete Files="@(OldPackages)"></Delete>
+  </Target>
+
+  <Target Name="CreatePackage" DependsOnTargets="$(CreatePackageDependsOn)">
+    <PropertyGroup>
+      <NuGetPackageVersion Condition="'$(NuGetPackageVersionPostfix)' != ''">$(NuGetPackageVersion)-$(NuGetPackageVersionPostfix)</NuGetPackageVersion>
+      <PackCommand>$(SolutionDir).nuget\nuget.exe pack "$(ProjectPath)" -prop configuration=$(NuGetPackageConfiguration) -Symbols -Version %(ProjectAssemblyInfo.Version)$(NuGetPackageVersionPostfix) -OutputDirectory "$(ProjectDir.TrimEnd('\'))"</PackCommand>
+    </PropertyGroup>
+
+    <Exec Command="$(PackCommand)" />
+  </Target>
+
+  <Target Name="DeployPackage">
+    <ItemGroup>
+      <OutputPackages Include="$(ProjectDir)*.nupkg" Exclude="$(ProjectDir)*.symbols.nupkg"></OutputPackages>
+      <OutputSymbols Include="$(ProjectDir)*.symbols.nupkg"></OutputSymbols>
+    </ItemGroup>
+
+    <PropertyGroup>
+      <NuGetApiKeyOption Condition="'$(NuGetApiKey)' != ''">-ApiKey $(NuGetApiKey)</NuGetApiKeyOption>
+      <NugetSourceOption Condition="'$(NuGetPackageSource)' != ''">-Source $(NuGetPackageSource)</NugetSourceOption>
+      <SymbolApiKeyOption Condition="'$(SymbolsApiKey)' != ''">-ApiKey $(SymbolsApiKey)</SymbolApiKeyOption>
+      <SymbolSourceOption Condition="'$(SymbolsPackageSource)' != ''">-Source $(SymbolsPackageSource)</SymbolSourceOption>
+    </PropertyGroup>
+
+    <Exec Command="$(SolutionDir).nuget\nuget.exe push %(OutputPackages.Identity) $(NuGetApiKeyOption) $(NugetSourceOption)" />
+    <Exec Command="$(SolutionDir).nuget\nuget.exe push %(OutputSymbols.Identity) $(SymbolApiKeyOption) $(SymbolSourceOption)" />
+  </Target>
+</Project>

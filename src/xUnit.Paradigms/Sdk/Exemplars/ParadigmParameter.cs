@@ -1,6 +1,6 @@
 ﻿using System.Reflection;
 
-namespace xUnit.Paradigms
+namespace xUnit.Paradigms.Sdk.Exemplars
 {
     public class ParadigmParameter
     {
@@ -20,7 +20,14 @@ namespace xUnit.Paradigms
 
         public override string ToString()
         {
-            return _parameterInfo.Name + ": " + ((_value is string) ? "\"" + _value + "\"" : _value.ToString());
+            return string.Format("{0}: {1}", _parameterInfo.Name, FormatValue());
+        }
+
+        private string FormatValue()
+        {
+            if (_value == null) return "null";
+            if (_value is string) return "\"" + _value + "\"";
+            return _value.ToString();
         }
     }
 }

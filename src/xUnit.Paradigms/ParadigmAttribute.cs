@@ -1,6 +1,7 @@
 ﻿using System.Text;
 using Xunit;
 using Xunit.Extensions;
+using xUnit.Paradigms.Sdk;
 
 namespace xUnit.Paradigms
 {

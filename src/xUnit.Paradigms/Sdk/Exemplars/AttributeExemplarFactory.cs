@@ -3,7 +3,7 @@ using System.Linq;
 using System.Reflection;
 using Xunit.Sdk;
 
-namespace xUnit.Paradigms
+namespace xUnit.Paradigms.Sdk.Exemplars
 {
     public class AttributeExemplarFactory : IExemplarFactory
     {
@@ -32,20 +32,9 @@ namespace xUnit.Paradigms
 
         private IEnumerable<IParadigmExemplar> GetExemplars(ITypeInfo typeUnderTest, ConstructorInfo constructor, ParadigmDataAttribute attribute)
         {
-
-            //var parameterInfos = constructor.GetParameters();
-            //var parameterTypes = new Type[parameterInfos.Length];
-            //
-            //for (var idx = 0; idx < parameterInfos.Length; idx++)
-            //    parameterTypes[idx] = parameterInfos[idx].ParameterType;
-
             var attrData = attribute.GetData(null, null);
-            //if (attrData == null) yield break;
 
-            foreach (var dataItems in attrData)
-            {
-                yield return new ParadigmExemplar(typeUnderTest.Type, constructor.GetParameters(), dataItems);
-            }
+            return attrData.Select(dataItems => new ParadigmExemplar(typeUnderTest, constructor.GetParameters(), dataItems));
         }
     }
 }

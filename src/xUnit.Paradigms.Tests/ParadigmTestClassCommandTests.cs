@@ -6,9 +6,14 @@ using System.Text;
 using FrontIT.Matchers;
 using Moq;
 using Ploeh.AutoFixture;
+using Ploeh.AutoFixture.Idioms;
 using Ploeh.AutoFixture.Xunit;
 using Xunit;
 using Xunit.Extensions;
+using xUnit.Paradigms.Sdk;
+using xUnit.Paradigms.Sdk.Exemplars;
+using xUnit.Paradigms.Sdk.Fixtures;
+using xUnit.Paradigms.Sdk.Utilities;
 using Xunit.Sdk;
 using Assert = FrontIT.Matchers.Assert;
 
@@ -105,15 +110,116 @@ namespace xUnit.Paradigms.Tests
 
             for (var i = 0; i < exemplars.Length; i++)
             {
-                Mock.Get(exemplars[i]).Setup(x => x.CreateTestCommands(methodToTest, It.IsAny<Dictionary<MethodInfo, object>>()))
+                Mock.Get(exemplars[i]).Setup(x => x.CreateTestCommands(methodToTest, It.IsAny<IFixtureSet>()))
                     .Returns(createdCommands[i]);
             }
 
 
-            sut.ClassStart();
+            var result = sut.ClassStart();
+            Assert.Null(result);
             var commands = sut.EnumerateTestCommands(methodToTest);
 
             Assert.Equal(createdCommands.SelectMany(x => x), commands);
+        }
+
+        [Theory]
+        [DefaultAutoData]
+        public void FixtureSetIsCreatedDuringClassStart(
+            [Frozen] IFixtureSetFactory fixtureSetFactory,
+            ParadigmTestClassCommand sut,
+            IFixtureSet fixtureSet)
+        {
+            Mock.Get(fixtureSetFactory).Setup(x => x.CreateFixturesFor(sut.TypeUnderTest))
+                .Returns(fixtureSet);
+
+            var result = sut.ClassStart();
+
+            Assert.Null(result);
+            Assert.Same(fixtureSet, sut.FixtureSet);
+        }
+
+        [Theory]
+        [DefaultAutoData]
+        public void ExceptionFromFixtureSetCreationIsReturnedButNotThrown(
+            [Frozen] IFixtureSetFactory fixtureSetFactory,
+            ParadigmTestClassCommand sut,
+            Exception expected)
+        {
+            Mock.Get(fixtureSetFactory).Setup(x => x.CreateFixturesFor(sut.TypeUnderTest))
+                .Throws(expected);
+
+            var actual = sut.ClassStart();
+
+            Assert.Same(expected, actual);
+        }
+
+        [Theory]
+        [DefaultAutoData]
+        public void CreatedFixtureSetIsUsedToCreateTestCommands(
+            [Frozen] IExemplarFactory exemplarFactory,
+            [Frozen] IFixtureSetFactory fixtureSetFactory,
+            ParadigmTestClassCommand sut,
+            IParadigmExemplar[] exemplars,
+            IEnumerable<ITestCommand>[] createdCommands,
+            IFixtureSet fixtureSet,
+            IMethodInfo methodInfo)
+        {
+            Mock.Get(exemplarFactory).Setup(x => x.CreateExemplarsFor(sut.TypeUnderTest))
+                .Returns(exemplars);
+
+            for (var i = 0; i < exemplars.Length; i++)
+            {
+                Mock.Get(exemplars[i]).Setup(x => x.CreateTestCommands(It.IsAny<IMethodInfo>(), fixtureSet))
+                    .Returns(createdCommands[i]);
+            }
+
+            Mock.Get(fixtureSetFactory).Setup(x => x.CreateFixturesFor(sut.TypeUnderTest))
+                .Returns(fixtureSet);
+
+            sut.ClassStart();
+
+            var commands = sut.EnumerateTestCommands(methodInfo);
+
+            Assert.Equal(createdCommands.SelectMany(x => x), commands);
+        }
+
+        [Theory]
+        [DefaultAutoData]
+        public void FixtureSetIsDisposedOnClassFinish (
+            [Frozen] IFixtureSetFactory fixtureSetFactory,
+            ParadigmTestClassCommand sut,
+            IFixtureSet fixtureSet)
+        {
+            Mock.Get(fixtureSetFactory).Setup(x => x.CreateFixturesFor(sut.TypeUnderTest))
+                .Returns(fixtureSet);
+
+            sut.ClassStart();
+
+            Mock.Get(fixtureSet).Verify(x => x.Dispose(), Times.Never());
+            var result = sut.ClassFinish();
+            Mock.Get(fixtureSet).Verify(x => x.Dispose());
+
+            Assert.Null(result);
+        }
+
+        [Theory]
+        [DefaultAutoData]
+        public void ExceptionThrownDuringFixtureSetDisposeIsReturnedButNotThrown(
+            [Frozen] IFixtureSetFactory fixtureSetFactory,
+            ParadigmTestClassCommand sut,
+            IFixtureSet fixtureSet,
+            Exception expected
+            )
+        {
+            Mock.Get(fixtureSetFactory).Setup(x => x.CreateFixturesFor(sut.TypeUnderTest))
+                .Returns(fixtureSet);
+
+            sut.ClassStart();
+
+            Mock.Get(fixtureSet).Setup(x => x.Dispose()).Throws(expected);
+            var result = sut.ClassFinish();
+
+            Assert.Same(expected, result);
         }
 
         [Theory]
@@ -239,6 +345,13 @@ namespace xUnit.Paradigms.Tests
 
             var actual = sut.ChooseNextTest(methods);
             Assert.Equal(randomValue, actual);
+        }
+
+        [Theory]
+        [DefaultAutoData]
+        public void WritablePropertiesBehaveCorrectly(WritablePropertyAssertion assertion)
+        {
+            assertion.Verify(typeof(ParadigmTestClassCommand));
         }
     }
 }

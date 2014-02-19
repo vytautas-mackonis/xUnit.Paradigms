@@ -1,7 +1,6 @@
 ﻿using System;
-using System.Runtime.InteropServices;
 
-namespace xUnit.Paradigms
+namespace xUnit.Paradigms.Sdk.Utilities
 {
     public interface IRandomizer
     {

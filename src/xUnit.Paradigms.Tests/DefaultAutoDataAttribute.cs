@@ -5,6 +5,7 @@ using System.Text;
 using Ploeh.AutoFixture;
 using Ploeh.AutoFixture.AutoMoq;
 using Ploeh.AutoFixture.Xunit;
+using xUnit.Paradigms.Sdk.Exemplars;
 
 namespace xUnit.Paradigms.Tests
 {

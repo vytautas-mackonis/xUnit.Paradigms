@@ -2,22 +2,23 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
+using xUnit.Paradigms.Sdk.Fixtures;
+using xUnit.Paradigms.Sdk.Utilities;
 using Xunit.Sdk;
 
-namespace xUnit.Paradigms
+namespace xUnit.Paradigms.Sdk.Exemplars
 {
     public interface IParadigmExemplar
     {
-        object CreateTestInstance();
-        IEnumerable<ITestCommand> CreateTestCommands(IMethodInfo testMethod, Dictionary<MethodInfo, object> fixtures);
+        IEnumerable<ITestCommand> CreateTestCommands(IMethodInfo testMethod, IFixtureSet fixtureSet);
     }
 
     public class ParadigmExemplar : IParadigmExemplar
     {
-        private readonly Type _testClassType;
+        private readonly ITypeInfo _testClassType;
         private readonly ParadigmParameter[] _parameters;
 
-        public ParadigmExemplar(Type testClassType, ParameterInfo[] parameters, object[] parameterValues)
+        public ParadigmExemplar(ITypeInfo testClassType, ParameterInfo[] parameters, object[] parameterValues)
         {
             _testClassType = testClassType;
             _parameters = CreateParameters(parameters, parameterValues);
@@ -58,36 +59,22 @@ namespace xUnit.Paradigms
             return true;
         }
 
-        public object CreateTestInstance()
-        {
-            return Activator.CreateInstance(_testClassType, _parameters.Select(x => x.Value).ToArray());
-        }
-
         public override string ToString()
         {
-            return string.Format("{0}({1})", _testClassType.Name, string.Join(", ", _parameters.Select(x => x.ToString())));
+            return string.Format("{0}({1})", _testClassType.Type.Name, string.Join(", ", _parameters.Select(x => x.ToString())));
         }
 
         private string GetNameFor(ITestCommand command)
         {
-            return command.DisplayName.Replace(_testClassType.Name, ToString());
+            return command.DisplayName.Replace(_testClassType.Type.Name, ToString());
         }
 
-        public IEnumerable<ITestCommand> CreateTestCommands(IMethodInfo testMethod, Dictionary<MethodInfo, object> fixtures)
+        public IEnumerable<ITestCommand> CreateTestCommands(IMethodInfo testMethod, IFixtureSet fixtureSet)
         {
             foreach (var command in MethodUtility.GetTestCommands(testMethod))
             {
-                yield return new ParadigmTestCommand(testMethod, new FixtureCommand(command, fixtures), GetNameFor(command), CreateTestInstance());
+                yield return new ParadigmTestCommand(testMethod, fixtureSet.ApplyFixturesToCommand(command), GetNameFor(command), new ConstructorInvokingObjectFactory(_testClassType.Type, _parameters.Select(x => x.Value).ToArray()));
             }
-        }
-    }
-
-    public static class TypeExtensions
-    {
-        public static bool IsValueCompatible(Type type, object value)
-        {
-            if (value == null) return !type.IsValueType;
-            return type.IsInstanceOfType(value);
         }
     }
 }

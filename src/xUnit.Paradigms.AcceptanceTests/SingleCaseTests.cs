@@ -10,7 +10,10 @@ namespace xUnit.Paradigms.AcceptanceTests
 {
     public class SingleCaseTests : AcceptanceTestInNewAppDomain
     {
-        private const string code = @"using Xunit;
+        [Fact]
+        public void PassingTestPasses()
+        {
+            const string code = @"using Xunit;
 using Xunit.Extensions;
 using xUnit.Paradigms;
 
@@ -36,39 +39,8 @@ public class SingleCaseTests
         Assert.Equal(12L, twelveParam);
         Assert.Equal(""bar"", barParam);
     }
-
-    [Theory]
-    [InlineData(12L, ""bar"")]
-    public void FailingTheory1(long twelveParam, string barParam)
-    {
-        Assert.Equal(""bar"", _fooField);
-    }
-
-    [Theory]
-    [InlineData(12L, ""bar"")]
-    public void FailingTheory2(long twelveParam, string barParam)
-    {
-        Assert.Equal(2, _oneField);
-    }
-
-    [Theory]
-    [InlineData(12L, ""bar"")]
-    public void FailingTheory3(long twelveParam, string barParam)
-    {
-        Assert.Equal(13L, twelveParam);
-    }
-
-    [Theory]
-    [InlineData(12L, ""bar"")]
-    public void FailingTheory4(long twelveParam, string barParam)
-    {
-        Assert.Equal(""foo"", barParam);
-    }
 }";
 
-        [Fact]
-        public void PassingTestPasses()
-        {
             var assemblyNode = ExecuteWithReferences(code, "xunit.extensions.dll", "xunit.paradigms.dll");
 
             var passingTestResult = ResultXmlUtility.GetResult(assemblyNode, 0, 0);
@@ -84,9 +56,34 @@ public class SingleCaseTests
         [InlineData(4)]
         public void FailingTestFails(int testIndex)
         {
-            var assemblyNode = ExecuteWithReferences(code, "xunit.extensions.dll", "xunit.paradigms.dll");
+            const string code = @"using Xunit;
+using Xunit.Extensions;
+using xUnit.Paradigms;
 
-            var passingTestResult = ResultXmlUtility.GetResult(assemblyNode, 0, testIndex);
+[Paradigm]
+[ParadigmInlineData(""foo"", 1)]
+public class SingleCaseTests
+{{
+    private readonly string _fooField;
+    private readonly int _oneField;
+
+    public SingleCaseTests(string fooField, int oneField)
+    {{
+        _fooField = fooField;
+        _oneField = oneField;
+    }}
+
+    [Theory]
+    [InlineData(12L, ""bar"")]
+    public void FailingTheory{0}(long twelveParam, string barParam)
+    {{
+        Assert.Equal(""foo"", barParam);
+    }}
+}}";
+
+            var assemblyNode = ExecuteWithReferences(string.Format(code, testIndex), "xunit.extensions.dll", "xunit.paradigms.dll");
+
+            var passingTestResult = ResultXmlUtility.GetResult(assemblyNode, 0, 0);
             passingTestResult.ShouldHaveName("SingleCaseTests(fooField: \"foo\", oneField: 1).FailingTheory" + testIndex + "(twelveParam: 12, barParam: \"bar\")");
             passingTestResult.ShouldHaveFailed();
         }

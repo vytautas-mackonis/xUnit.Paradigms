@@ -1,6 +1,6 @@
 ﻿using Xunit.Sdk;
 
-namespace xUnit.Paradigms
+namespace xUnit.Paradigms.Sdk.Exemplars
 {
     public interface IExemplarFactory
     {

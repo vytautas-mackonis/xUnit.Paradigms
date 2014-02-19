@@ -6,7 +6,7 @@ namespace xUnit.Paradigms.Tests
     {
         private readonly string _s;
 
-        public object ArgumentValue
+        public string ArgumentValue
         {
             get { return _s; }
         }

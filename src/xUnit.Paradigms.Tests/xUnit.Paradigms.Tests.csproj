@@ -38,11 +38,17 @@
     <Reference Include="Moq">
       <HintPath>..\..\packages\Moq.3.1.416.3\lib\Moq.dll</HintPath>
     </Reference>
+    <Reference Include="Ploeh.Albedo">
+      <HintPath>..\..\packages\Albedo.0.1.1\lib\net35\Ploeh.Albedo.dll</HintPath>
+    </Reference>
     <Reference Include="Ploeh.AutoFixture">
       <HintPath>..\..\packages\AutoFixture.3.16.5\lib\net40\Ploeh.AutoFixture.dll</HintPath>
     </Reference>
     <Reference Include="Ploeh.AutoFixture.AutoMoq">
       <HintPath>..\..\packages\AutoFixture.AutoMoq.3.16.5\lib\net40\Ploeh.AutoFixture.AutoMoq.dll</HintPath>
+    </Reference>
+    <Reference Include="Ploeh.AutoFixture.Idioms">
+      <HintPath>..\..\packages\AutoFixture.Idioms.3.16.5\lib\net40\Ploeh.AutoFixture.Idioms.dll</HintPath>
     </Reference>
     <Reference Include="Ploeh.AutoFixture.Xunit">
       <HintPath>..\..\packages\AutoFixture.Xunit.3.16.5\lib\net40\Ploeh.AutoFixture.Xunit.dll</HintPath>
@@ -62,15 +68,34 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="ConstructorInvokingObjectFactoryTests.cs" />
     <Compile Include="DefaultAutoDataAttribute.cs" />
+    <Compile Include="FixtureSetFactoryTests.cs" />
+    <Compile Include="FixtureSetTests.cs" />
+    <Compile Include="MockFactAttribute.cs" />
+    <Compile Include="ParadigmExemplarTests.cs" />
+    <Compile Include="ParadigmInlineDataAttributeTests.cs" />
     <Compile Include="ParadigmTestClassCommandTests.cs" />
+    <Compile Include="ParadigmTestCommandTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="TestClasses\AClassThatThrowsExceptionWhenConstructed.cs" />
+    <Compile Include="TestClasses\AClassWithDisposableFixture.cs" />
+    <Compile Include="TestClasses\AClassWithInvalidFixture.cs" />
+    <Compile Include="TestClasses\AClassWithOneValidFixture.cs" />
+    <Compile Include="TestClasses\AClassWithOneValidFixtureAndOneOtherInterface.cs" />
+    <Compile Include="TestClasses\AClassWithSelfAsFixture.cs" />
     <Compile Include="TestClasses\AClassWithStringArgument.cs" />
     <Compile Include="TestClasses\AClassWithThreeConstructors.cs" />
+    <Compile Include="TestClasses\AClassWithThrowingSetFixtureMethod.cs" />
     <Compile Include="TestClasses\AClassWithTwoConstructors.cs" />
     <Compile Include="TestClasses\AClassWithTwoIntArguments.cs" />
     <Compile Include="TestClasses\AClassWithTwoObjectArguments.cs" />
     <Compile Include="TestClasses\AClassWithTwoStringArguments.cs" />
+    <Compile Include="TestClasses\AClassWithTwoValidFixtures.cs" />
+    <Compile Include="TestClasses\DisposableFixture.cs" />
+    <Compile Include="TestClasses\InvalidFixture.cs" />
+    <Compile Include="TestClasses\ValidFixture1.cs" />
+    <Compile Include="TestClasses\ValidFixture2.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="app.config" />
