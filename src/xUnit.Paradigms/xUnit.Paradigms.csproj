@@ -47,6 +47,7 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <None Include="CreatePackage.msbuild" />
     <None Include="xUnit.Paradigms.nuspec" />
     <None Include="Publish.msbuild" />
     <Compile Include="Sdk\Exemplars\AttributeExemplarFactory.cs" />

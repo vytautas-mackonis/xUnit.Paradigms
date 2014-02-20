@@ -17,6 +17,12 @@ Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".nuget", ".nuget", "{A853FE
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "xUnit.Paradigms.Tests", "src\xUnit.Paradigms.Tests\xUnit.Paradigms.Tests.csproj", "{3D6F91DC-1D96-4DFE-9816-D7B922E60D42}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = ".build", ".build", "{9D19978C-7B9A-4CF9-AF84-7D1AF5D2A3F2}"
+	ProjectSection(SolutionItems) = preProject
+		.build\NugetPublish.targets = .build\NugetPublish.targets
+		.build\NugetPublishConventions.targets = .build\NugetPublishConventions.targets
+	EndProjectSection
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
