@@ -32,7 +32,7 @@ namespace xUnit.Paradigms.Sdk.Exemplars
 
         private IEnumerable<IParadigmExemplar> GetExemplars(ITypeInfo typeUnderTest, ConstructorInfo constructor, ParadigmDataAttribute attribute)
         {
-            var attrData = attribute.GetData(null, null);
+            var attrData = attribute.GetData(constructor, constructor.GetParameters().Select(x => x.ParameterType).ToArray());
 
             return attrData.Select(dataItems => new ParadigmExemplar(typeUnderTest, constructor.GetParameters(), dataItems));
         }

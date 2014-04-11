@@ -1,5 +1,4 @@
-﻿using System.Collections.Generic;
-using System.Linq;
+﻿using System.Linq;
 using System.Text;
 using TestUtility;
 using Xunit;
@@ -86,6 +85,63 @@ public class SingleCaseTests
             var passingTestResult = ResultXmlUtility.GetResult(assemblyNode, 0, 0);
             passingTestResult.ShouldHaveName("SingleCaseTests(fooField: \"foo\", oneField: 1).FailingTheory" + testIndex + "(twelveParam: 12, barParam: \"bar\")");
             passingTestResult.ShouldHaveFailed();
+        }
+
+        [Fact]
+        public void CorrectParametersArePassedToDataAttribute()
+        {
+            const string code = @"using System;
+using System.Collections.Generic;
+using System.Reflection;
+using Xunit;
+using xUnit.Paradigms;
+
+public class InvariantCheckingParadigmDataAttribute : ParadigmDataAttribute
+{
+    public override IEnumerable<object[]> GetData(ConstructorInfo constructor, Type[] parameterTypes)
+    {
+        var expectedConstructor = typeof (DataAttributeParameterTests).GetConstructors()[0];
+        Assert.Equal(expectedConstructor, constructor);
+
+        var expectedParameterTypes = new[] {typeof (ParameterClass1), typeof (ParameterClass2)};
+        Assert.Equal(expectedParameterTypes, parameterTypes);
+
+        yield return new object[] { new ParameterClass1(), new ParameterClass2()};
+    }
+}
+
+public class ParameterClass1
+{
+}
+
+public class ParameterClass2
+{
+}
+
+[Paradigm]
+[InvariantCheckingParadigmDataAttribute]
+public class DataAttributeParameterTests
+{
+    private ParameterClass1 _param1;
+    private ParameterClass2 _param2;
+
+    public DataAttributeParameterTests(ParameterClass1 param1, ParameterClass2 param2)
+    {
+        _param1 = param1;
+        _param2 = param2;
+    }
+
+    [Fact]
+    public void FactMethodName()
+    {
+        
+    }
+}";
+
+            var assemblyNode = ExecuteWithReferences(code, "xunit.extensions.dll", "xunit.paradigms.dll");
+
+            var passingTestResult = ResultXmlUtility.GetResult(assemblyNode, 0, 0);
+            passingTestResult.ShouldHavePassed();
         }
     }
 }
