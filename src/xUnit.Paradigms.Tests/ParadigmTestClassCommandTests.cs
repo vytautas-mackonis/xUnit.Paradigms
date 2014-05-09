@@ -74,6 +74,7 @@ namespace xUnit.Paradigms.Tests
         [DontMockExemplarFactoryDataAttribute(typeof(AClassWithTwoStringArguments), new object[] { "", null })]
         [DontMockExemplarFactoryDataAttribute(typeof(AClassWithTwoIntArguments), new object[] { 1, 1 })]
         [DontMockExemplarFactoryDataAttribute(typeof(AClassWithTwoObjectArguments), new object[] { "", new object[0] })]
+        [DontMockExemplarFactoryDataAttribute(typeof(AClassWithNullableIntArgument), new object[] { null })]
         public void ClassStartDoesNotThrowUponMatchingConstructor(
             Type classType,
             object[] exemplarArguments,

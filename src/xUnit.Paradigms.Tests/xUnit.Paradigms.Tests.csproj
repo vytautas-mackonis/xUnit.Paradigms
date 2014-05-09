@@ -92,6 +92,7 @@
     <Compile Include="TestClasses\AClassWithTwoObjectArguments.cs" />
     <Compile Include="TestClasses\AClassWithTwoStringArguments.cs" />
     <Compile Include="TestClasses\AClassWithTwoValidFixtures.cs" />
+    <Compile Include="TestClasses\AClassWithNullableIntArgument.cs" />
     <Compile Include="TestClasses\DisposableFixture.cs" />
     <Compile Include="TestClasses\InvalidFixture.cs" />
     <Compile Include="TestClasses\ValidFixture1.cs" />
