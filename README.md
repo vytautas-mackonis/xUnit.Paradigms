@@ -70,3 +70,8 @@ public class DivisionControllerSuccessTests
 }
 ```
 As you can see, instead of parametrizing methods we parametrized class constructor. Then we can move the common code into the constructor and the tests themselves will only do the assertions. The concept is the same as data theories, just different attribute names. And you can also mix `[Paradigm]` attribute with a `[Theory]`.
+
+License
+===
+Licensed under [The BSD 3-Clause License](http://opensource.org/licenses/BSD-3-Clause)
+<br/>Copyright &copy;  2014+ Vytautas Mackonis
